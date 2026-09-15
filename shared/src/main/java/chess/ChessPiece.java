@@ -15,54 +15,56 @@ public class ChessPiece {
     private final ChessGame.TeamColor pieceColor;
     private final PieceType type;
 
-    private Collection<ChessMove> moveChecker(ChessBoard board, ChessPosition myPosition, int rowIterator, int colIterator) {
+    private Collection<ChessMove> makeChessMove(ChessBoard board, ChessPosition myPosition, int[][] moveList, boolean allowRange) {
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
-        int row = myPosition.getRow() + rowIterator;
-        int col = myPosition.getColumn() + colIterator;
-        boolean validSquare = true;
-        while( col >= 1 && col  <= 8 && row >= 1 && row <= 8 && validSquare) {
-            ChessPosition currentPosition = new ChessPosition(row, col);
-            if(board.getPiece(currentPosition) == null) {
-                moves.add(new ChessMove(myPosition, currentPosition, null));
+        for(int[] moveDirection : moveList) {
+            int row = myPosition.getRow() + moveDirection[0];
+            int col = myPosition.getColumn() + moveDirection[1];
+            boolean validSquare = true;
+            while (col >= 1 && col <= 8 && row >= 1 && row <= 8 && validSquare) {
+                ChessPosition currentPosition = new ChessPosition(row, col);
+                if (board.getPiece(currentPosition) == null) {
+                    moves.add(new ChessMove(myPosition, currentPosition, null));
+                } else if (board.getPiece(currentPosition).pieceColor != this.pieceColor) {
+                    moves.add(new ChessMove(myPosition, currentPosition, null));
+                    validSquare = false;
+                } else {
+                    validSquare = false;
+                }
+                if(!allowRange) {
+                    validSquare = false;
+                }
+                row += moveDirection[0];
+                col += moveDirection[1];
             }
-            else if(board.getPiece(currentPosition).pieceColor != this.pieceColor) {
-                moves.add(new ChessMove(myPosition, currentPosition, null));
-                validSquare = false;
-            }
-            else {
-                validSquare = false;
-            }
-            row += rowIterator;
-            col += colIterator;
         }
         return moves;
     }
 
-    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new ArrayList<ChessMove>();
-        moves.addAll(moveChecker(board, myPosition, 1, 1));
-        moves.addAll(moveChecker(board, myPosition, 1, -1));
-        moves.addAll(moveChecker(board, myPosition, -1, 1));
-        moves.addAll(moveChecker(board, myPosition, -1, -1));
-        return moves;
-    }
-    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new ArrayList<ChessMove>();
-        moves.addAll(moveChecker(board, myPosition, 1, 0));
-        moves.addAll(moveChecker(board, myPosition, -1, 0));
-        moves.addAll(moveChecker(board, myPosition, 0, 1));
-        moves.addAll(moveChecker(board, myPosition, 0, -1));
-        return moves;
-    }
-    private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new ArrayList<ChessMove>();
-        moves.addAll(bishopMoves(board, myPosition));
-        moves.addAll(rookMoves(board, myPosition));
-        return moves;
-    }
-    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new ArrayList<ChessMove>();
-        return moves;
+    private Collection<ChessMove> makePawnMove(ChessBoard board, ChessPosition myPosition) {
+//        if(pieceColor == ChessGame.TeamColor.WHITE) {
+//            if() {
+//
+//            }
+//            else if() {
+//
+//            }
+//            else() {
+//
+//            }
+//        }
+//        else {
+//            if() {
+//
+//            }
+//            else if() {
+//
+//            }
+//            else() {
+//
+//            }
+//        }
+        return List.of();
     }
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
@@ -104,11 +106,29 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        if(type == PieceType.BISHOP) {return bishopMoves(board, myPosition);}
-        if(type == PieceType.ROOK) {return rookMoves(board, myPosition);}
-        if(type == PieceType.QUEEN) {return queenMoves(board, myPosition);}
-        if(type == PieceType.KING) {return kingMoves(board, myPosition);}
-
+        if(type == PieceType.BISHOP) {
+            int[][] bishopMoves = {{1,1}, {1,-1}, {-1,1}, {-1,-1}};
+            return makeChessMove(board, myPosition, bishopMoves, true);
+        }
+        if(type == PieceType.ROOK) {
+            int[][] rookMoves = {{1,0}, {0,1}, {-1,0}, {0,-1}};
+            return makeChessMove(board, myPosition, rookMoves, true);
+        }
+        if(type == PieceType.QUEEN) {
+            int[][] queenMoves = {{1,0}, {0,1}, {-1,0}, {0,-1},{1,1}, {1,-1}, {-1,1}, {-1,-1}};
+            return makeChessMove(board, myPosition, queenMoves, true);
+        }
+        if(type == PieceType.KING) {
+            int[][] kingMoves = {{1,0}, {0,1}, {-1,0}, {0,-1},{1,1}, {1,-1}, {-1,1}, {-1,-1}};
+            return makeChessMove(board, myPosition, kingMoves, false);
+        }
+        if(type == PieceType.KNIGHT) {
+            int[][] knightMoves = {{2,1}, {2,-1}, {-2,1}, {-2,-1},{1,2}, {1,-2}, {-1,2}, {-1,-2}};
+            return makeChessMove(board, myPosition, knightMoves, false);
+        }
+        if(type == PieceType.PAWN) {
+            return makePawnMove(board, myPosition);
+        }
         return List.of();
     }
 

@@ -42,29 +42,56 @@ public class ChessPiece {
     }
 
     private Collection<ChessMove> makePawnMove(ChessBoard board, ChessPosition myPosition) {
-//        if(pieceColor == ChessGame.TeamColor.WHITE) {
-//            if() {
-//
-//            }
-//            else if() {
-//
-//            }
-//            else() {
-//
-//            }
-//        }
-//        else {
-//            if() {
-//
-//            }
-//            else if() {
-//
-//            }
-//            else() {
-//
-//            }
-//        }
-        return List.of();
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        if(pieceColor == ChessGame.TeamColor.WHITE) {
+            if(row == 8) {
+                return List.of();
+            }
+            else {
+                ChessPosition nextSquare = new ChessPosition(row + 1, col);
+                if(board.getPiece(nextSquare) == null) {
+                    moves.add(new ChessMove(myPosition, nextSquare, null));
+                }
+                ChessPosition leftAttackingSquare = new ChessPosition(row + 1, col - 1);
+                if(col > 1 && board.getPiece(leftAttackingSquare) != null && board.getPiece(leftAttackingSquare).pieceColor != pieceColor) {
+                    moves.add(new ChessMove(myPosition, leftAttackingSquare, null));
+                }
+                ChessPosition rightAttackingSquare = new ChessPosition(row + 1,col + 1);
+                if(col < 8 && board.getPiece(rightAttackingSquare) != null && board.getPiece(rightAttackingSquare).pieceColor != pieceColor) {
+                    moves.add(new ChessMove(myPosition, rightAttackingSquare, null));
+                }
+                ChessPosition startingExtraSquare = new ChessPosition(row + 2,col );
+                if(row == 2 && board.getPiece(startingExtraSquare) == null) {
+                    moves.add(new ChessMove(myPosition, startingExtraSquare, null));
+                }
+            }
+        }
+        else {
+            if(row == 1) {
+                return List.of();
+            }
+            else {
+                ChessPosition nextSquare = new ChessPosition(row - 1, col);
+                if(board.getPiece(nextSquare) == null) {
+                    moves.add(new ChessMove(myPosition, nextSquare, null));
+                }
+                ChessPosition leftAttackingSquare = new ChessPosition(row - 1, col - 1);
+                if(col > 1 && board.getPiece(leftAttackingSquare) != null && board.getPiece(leftAttackingSquare).pieceColor != pieceColor) {
+                    moves.add(new ChessMove(myPosition, leftAttackingSquare, null));
+                }
+                ChessPosition rightAttackingSquare = new ChessPosition(row - 1,col + 1);
+                if(col < 8 && board.getPiece(rightAttackingSquare) != null && board.getPiece(rightAttackingSquare).pieceColor != pieceColor) {
+                    moves.add(new ChessMove(myPosition, rightAttackingSquare, null));
+                }
+                ChessPosition startingExtraSquare = new ChessPosition(row - 2,col );
+                if(row == 7 && board.getPiece(startingExtraSquare) == null) {
+                    moves.add(new ChessMove(myPosition, startingExtraSquare, null));
+                }
+            }
+        }
+        return moves;
     }
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {

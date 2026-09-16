@@ -41,55 +41,48 @@ public class ChessPiece {
         return moves;
     }
 
+    private Collection<ChessMove> pawnPromotionCheck(ChessPosition startPosition, ChessPosition endPosition) {
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        if(endPosition.getRow() == 8 || endPosition.getRow() == 1) {
+            moves.add(new ChessMove(startPosition, endPosition, PieceType.BISHOP));
+            moves.add(new ChessMove(startPosition, endPosition, PieceType.KNIGHT));
+            moves.add(new ChessMove(startPosition, endPosition, PieceType.ROOK));
+            moves.add(new ChessMove(startPosition, endPosition, PieceType.QUEEN));
+        }
+        else {
+            moves.add(new ChessMove(startPosition, endPosition, null));
+        }
+        return moves;
+    }
+
     private Collection<ChessMove> makePawnMove(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
-        if(pieceColor == ChessGame.TeamColor.WHITE) {
-            if(row == 8) {
-                return List.of();
-            }
-            else {
-                ChessPosition nextSquare = new ChessPosition(row + 1, col);
-                if(board.getPiece(nextSquare) == null) {
-                    moves.add(new ChessMove(myPosition, nextSquare, null));
-                }
-                ChessPosition leftAttackingSquare = new ChessPosition(row + 1, col - 1);
-                if(col > 1 && board.getPiece(leftAttackingSquare) != null && board.getPiece(leftAttackingSquare).pieceColor != pieceColor) {
-                    moves.add(new ChessMove(myPosition, leftAttackingSquare, null));
-                }
-                ChessPosition rightAttackingSquare = new ChessPosition(row + 1,col + 1);
-                if(col < 8 && board.getPiece(rightAttackingSquare) != null && board.getPiece(rightAttackingSquare).pieceColor != pieceColor) {
-                    moves.add(new ChessMove(myPosition, rightAttackingSquare, null));
-                }
-                ChessPosition startingExtraSquare = new ChessPosition(row + 2,col );
-                if(row == 2 && board.getPiece(startingExtraSquare) == null) {
-                    moves.add(new ChessMove(myPosition, startingExtraSquare, null));
-                }
+        int direction = 0;
+        if(pieceColor == ChessGame.TeamColor.WHITE) direction++; else direction--;
+        //Check if an extra starting move is available
+        if((row == 2 || row == 7) && row + (2 * direction) < 8 && row + (2 * direction) > 0) {
+            ChessPosition startingExtraSquare = new ChessPosition(row + (2 * direction),col );
+            if(board.getPiece(startingExtraSquare) == null && board.getPiece(new ChessPosition(row + direction, col)) == null) {
+                moves.add(new ChessMove(myPosition, startingExtraSquare, null));
             }
         }
-        else {
-            if(row == 1) {
-                return List.of();
-            }
-            else {
-                ChessPosition nextSquare = new ChessPosition(row - 1, col);
-                if(board.getPiece(nextSquare) == null) {
-                    moves.add(new ChessMove(myPosition, nextSquare, null));
-                }
-                ChessPosition leftAttackingSquare = new ChessPosition(row - 1, col - 1);
-                if(col > 1 && board.getPiece(leftAttackingSquare) != null && board.getPiece(leftAttackingSquare).pieceColor != pieceColor) {
-                    moves.add(new ChessMove(myPosition, leftAttackingSquare, null));
-                }
-                ChessPosition rightAttackingSquare = new ChessPosition(row - 1,col + 1);
-                if(col < 8 && board.getPiece(rightAttackingSquare) != null && board.getPiece(rightAttackingSquare).pieceColor != pieceColor) {
-                    moves.add(new ChessMove(myPosition, rightAttackingSquare, null));
-                }
-                ChessPosition startingExtraSquare = new ChessPosition(row - 2,col );
-                if(row == 7 && board.getPiece(startingExtraSquare) == null) {
-                    moves.add(new ChessMove(myPosition, startingExtraSquare, null));
-                }
-            }
+        //Check if one square forward move is available and if results in promotion
+        ChessPosition nextSquare = new ChessPosition(row + direction, col);
+        if(board.getPiece(nextSquare) == null) {
+            moves.addAll(pawnPromotionCheck(myPosition, nextSquare));
+        }
+        //checking if pawn can attack to the left and if it results in promotion
+        ChessPosition leftAttackingSquare = new ChessPosition(row + direction, col - 1);
+        if(col > 1 && board.getPiece(leftAttackingSquare) != null && board.getPiece(leftAttackingSquare).pieceColor != pieceColor) {
+            moves.addAll(pawnPromotionCheck(myPosition, leftAttackingSquare));
+        }
+        //checking if pawn can attack to the right and if it results in promotion
+        ChessPosition rightAttackingSquare = new ChessPosition(row + direction,col + 1);
+        if(col < 8 && board.getPiece(rightAttackingSquare) != null && board.getPiece(rightAttackingSquare).pieceColor != pieceColor) {
+            moves.addAll(pawnPromotionCheck(myPosition, rightAttackingSquare));
+
         }
         return moves;
     }

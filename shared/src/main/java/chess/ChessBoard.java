@@ -11,7 +11,8 @@ import java.util.Objects;
  */
 public class ChessBoard {
 
-    private final ChessPiece[][] board = new ChessPiece[8][8];
+    private ChessPiece[][] board = new ChessPiece[8][8];
+
     public ChessBoard() {
         
     }
@@ -42,7 +43,16 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        ChessPiece.PieceType[] backRow = new ChessPiece.PieceType[]{ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT,
+                                                                    ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN,
+                                                                    ChessPiece.PieceType.KING, ChessPiece.PieceType.BISHOP,
+                                                                    ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK};
+        ChessPiece.PieceType[] pawnRow = new ChessPiece.PieceType[]{ChessPiece.PieceType.PAWN, ChessPiece.PieceType.PAWN,
+                                                                    ChessPiece.PieceType.PAWN, ChessPiece.PieceType.PAWN,
+                                                                    ChessPiece.PieceType.PAWN, ChessPiece.PieceType.PAWN,
+                                                                    ChessPiece.PieceType.PAWN, ChessPiece.PieceType.PAWN};
+        ChessPiece[][] newBoard = new ChessPiece[8][8];
+
     }
 
     @Override

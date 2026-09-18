@@ -43,16 +43,28 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        ChessPiece.PieceType[] backRow = new ChessPiece.PieceType[]{ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT,
+        ChessPiece.PieceType[][] startingSet = new ChessPiece.PieceType[][]{{ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT,
                                                                     ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN,
                                                                     ChessPiece.PieceType.KING, ChessPiece.PieceType.BISHOP,
-                                                                    ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK};
-        ChessPiece.PieceType[] pawnRow = new ChessPiece.PieceType[]{ChessPiece.PieceType.PAWN, ChessPiece.PieceType.PAWN,
+                                                                    ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK},
+                                                                    {ChessPiece.PieceType.PAWN, ChessPiece.PieceType.PAWN,
                                                                     ChessPiece.PieceType.PAWN, ChessPiece.PieceType.PAWN,
                                                                     ChessPiece.PieceType.PAWN, ChessPiece.PieceType.PAWN,
-                                                                    ChessPiece.PieceType.PAWN, ChessPiece.PieceType.PAWN};
+                                                                    ChessPiece.PieceType.PAWN, ChessPiece.PieceType.PAWN}};
         ChessPiece[][] newBoard = new ChessPiece[8][8];
-
+        for(int i = 0; i < startingSet.length; i++) {
+            for(int j = 0; j < 8; j++) {
+                newBoard[i][j] = new ChessPiece(ChessGame.TeamColor.WHITE, startingSet[i][j]);
+            }
+        }
+        int rowNum = 7;
+        for (ChessPiece.PieceType[] pieceTypes : startingSet) {
+            for (int j = 0; j < 8; j++) {
+                newBoard[rowNum][j] = new ChessPiece(ChessGame.TeamColor.BLACK, pieceTypes[j]);
+            }
+            rowNum--;
+        }
+        board = newBoard;
     }
 
     @Override

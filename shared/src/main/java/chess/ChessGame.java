@@ -14,6 +14,21 @@ public class ChessGame {
     private ChessBoard board;
     private TeamColor teamTurn;
 
+    private void movePiece(ChessMove move) {
+        //TODO: logic that makes the given move no matter what, assume that it is valid
+    }
+
+    private void tryMove(ChessMove move) {
+        ChessPosition startingPosition = move.getStartPosition();
+        if(board.getPiece(startingPosition).getPieceType() != null) {
+            Collection<ChessMove> potentialMoves = board.getPiece(startingPosition).pieceMoves(board, startingPosition);
+            if(potentialMoves.contains(move)) {
+                movePiece(move);
+            }
+
+        }
+    }
+
     private Collection<ChessPosition> getEndPositions(ChessPosition position) {
         Collection<ChessMove> possibleMoves = board.getPiece(position).pieceMoves(board, position);
         Collection<ChessPosition> endPositions = new ArrayList<>();
@@ -23,23 +38,23 @@ public class ChessGame {
         return endPositions;
     }
 
-    private Collection<ChessPosition> getEnemyAttackingSquares() {
+    private Collection<ChessPosition> getEnemyAttackingSquares(TeamColor teamColor) {
         Collection<ChessPosition> enemyAttackingSquares = new ArrayList<>();
         for(int i = 1; i <= 8; i++) {
             for(int j = 1; j <= 8; j++) {
                 ChessPosition currentPosition = new ChessPosition(i, j);
-                if(board.getPiece(currentPosition).getPieceType() != null && board.getPiece(currentPosition).getTeamColor() != teamTurn) {
+                if(board.getPiece(currentPosition).getPieceType() != null && board.getPiece(currentPosition).getTeamColor() != teamColor) {
                     enemyAttackingSquares.addAll(getEndPositions(currentPosition));
                 }
             }
         }
         return enemyAttackingSquares;
     }
-    private ChessPosition getKingPosition() {
+    private ChessPosition getKingPosition(TeamColor teamColor) {
         for(int i = 1; i <= 8; i++) {
             for(int j = 1; j <= 8; j++) {
                 ChessPosition currentPosition = new ChessPosition(i, j);
-                if(board.getPiece(currentPosition) != null && board.getPiece(currentPosition).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(currentPosition).getTeamColor() == teamTurn) {
+                if(board.getPiece(currentPosition) != null && board.getPiece(currentPosition).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(currentPosition).getTeamColor() == teamColor) {
                     return currentPosition;
                 }
             }
@@ -50,6 +65,10 @@ public class ChessGame {
     public ChessGame() {
         board = new ChessBoard();
         teamTurn = TeamColor.WHITE;
+    }
+    public ChessGame(ChessGame other) {
+        this.board = other.board;
+        this.teamTurn = other.teamTurn;
     }
 
     /**
@@ -84,8 +103,16 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        //TODO check for checks
-        return board.getPiece(startPosition).pieceMoves(board, startPosition);
+        Collection<ChessMove> potentialMoves = board.getPiece(startPosition).pieceMoves(board, startPosition);
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        for(ChessMove move : potentialMoves) {
+            ChessGame testGame = new ChessGame(this);
+            testGame.tryMove(move);
+            if(!testGame.isInCheck(teamTurn)) {
+                validMoves.add(move);
+            }
+        }
+        return validMoves;
     }
 
     /**
@@ -98,7 +125,7 @@ public class ChessGame {
         ChessPosition startingPosition = move.getStartPosition();
         Collection<ChessMove> possibleMoves = validMoves(startingPosition);
         if(possibleMoves.contains(move)) {
-            //TODO implement functinality to make a move
+            movePiece(move);
         }
         else {
             throw new InvalidMoveException("Invalid Move");
@@ -112,7 +139,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        return getEnemyAttackingSquares().contains(getKingPosition());
+        return getEnemyAttackingSquares(teamColor).contains(getKingPosition(teamColor));
     }
 
     /**

@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -13,15 +14,37 @@ public class ChessGame {
     private ChessBoard board;
     private TeamColor teamTurn;
 
-    private Collection<ChessPosition> getEnemyAttackingSquares() {
+    private Collection<ChessPosition> getEndPositions(ChessPosition position) {
+        Collection<ChessMove> possibleMoves = board.getPiece(position).pieceMoves(board, position);
+        Collection<ChessPosition> endPositions = new ArrayList<>();
+        for(ChessMove move : possibleMoves) {
+            endPositions.add(move.getEndPosition());
+        }
+        return endPositions;
+    }
 
+    private Collection<ChessPosition> getEnemyAttackingSquares() {
+        Collection<ChessPosition> enemyAttackingSquares = new ArrayList<>();
+        for(int i = 1; i <= 8; i++) {
+            for(int j = 1; j <= 8; j++) {
+                ChessPosition currentPosition = new ChessPosition(i, j);
+                if(board.getPiece(currentPosition).getPieceType() != null && board.getPiece(currentPosition).getTeamColor() != teamTurn) {
+                    enemyAttackingSquares.addAll(getEndPositions(currentPosition));
+                }
+            }
+        }
+        return enemyAttackingSquares;
     }
     private ChessPosition getKingPosition() {
         for(int i = 1; i <= 8; i++) {
             for(int j = 1; j <= 8; j++) {
-
+                ChessPosition currentPosition = new ChessPosition(i, j);
+                if(board.getPiece(currentPosition) != null && board.getPiece(currentPosition).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(currentPosition).getTeamColor() == teamTurn) {
+                    return currentPosition;
+                }
             }
         }
+        return null;
     }
 
     public ChessGame() {
@@ -89,10 +112,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        if(getEnemyAttackingSquares().contains(board.getKingPosition())) {
-            return true;
-        }
-        return false;
+        return getEnemyAttackingSquares().contains(getKingPosition());
     }
 
     /**

@@ -15,12 +15,16 @@ public class ChessGame {
     private TeamColor teamTurn;
 
     private void movePiece(ChessMove move) {
-        //TODO: logic that makes the given move no matter what, assume that it is valid
+        ChessPosition startingPos = move.getStartPosition();
+        ChessPosition endingPos = move.getEndPosition();
+        ChessPiece piece = board.getPiece(startingPos);
+        board.addPiece(startingPos, null);
+        board.addPiece(endingPos, piece);
     }
 
     private void tryMove(ChessMove move) {
         ChessPosition startingPosition = move.getStartPosition();
-        if(board.getPiece(startingPosition).getPieceType() != null) {
+        if(board.getPiece(startingPosition) != null) {
             Collection<ChessMove> potentialMoves = board.getPiece(startingPosition).pieceMoves(board, startingPosition);
             if(potentialMoves.contains(move)) {
                 movePiece(move);
@@ -43,7 +47,7 @@ public class ChessGame {
         for(int i = 1; i <= 8; i++) {
             for(int j = 1; j <= 8; j++) {
                 ChessPosition currentPosition = new ChessPosition(i, j);
-                if(board.getPiece(currentPosition).getPieceType() != null && board.getPiece(currentPosition).getTeamColor() != teamColor) {
+                if(board.getPiece(currentPosition) != null && board.getPiece(currentPosition).getTeamColor() != teamColor) {
                     enemyAttackingSquares.addAll(getEndPositions(currentPosition));
                 }
             }
@@ -103,13 +107,15 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        Collection<ChessMove> potentialMoves = board.getPiece(startPosition).pieceMoves(board, startPosition);
         Collection<ChessMove> validMoves = new ArrayList<>();
-        for(ChessMove move : potentialMoves) {
-            ChessGame testGame = new ChessGame(this);
-            testGame.tryMove(move);
-            if(!testGame.isInCheck(teamTurn)) {
-                validMoves.add(move);
+        if(board.getPiece(startPosition) != null) {
+            Collection<ChessMove> potentialMoves = board.getPiece(startPosition).pieceMoves(board, startPosition);
+            for (ChessMove move : potentialMoves) {
+                ChessGame testGame = new ChessGame(this);
+                testGame.tryMove(move);
+                if (!testGame.isInCheck(teamTurn)) {
+                    validMoves.add(move);
+                }
             }
         }
         return validMoves;
@@ -125,7 +131,11 @@ public class ChessGame {
         ChessPosition startingPosition = move.getStartPosition();
         Collection<ChessMove> possibleMoves = validMoves(startingPosition);
         if(possibleMoves.contains(move)) {
+//            if(board.getPiece(startingPosition).getTeamColor() != teamTurn) {
+//                throw new InvalidMoveException("Invalid Move");
+//            }
             movePiece(move);
+            if(teamTurn == TeamColor.WHITE) teamTurn = TeamColor.BLACK; else teamTurn = TeamColor.WHITE;
         }
         else {
             throw new InvalidMoveException("Invalid Move");

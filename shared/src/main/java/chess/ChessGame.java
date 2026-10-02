@@ -44,17 +44,6 @@ public class ChessGame {
         board.addPiece(endingPos, piece);
     }
 
-    private void tryMove(ChessMove move) {
-        ChessPosition startingPosition = move.getStartPosition();
-        if(board.getPiece(startingPosition) != null) {
-            Collection<ChessMove> potentialMoves = board.getPiece(startingPosition).pieceMoves(board, startingPosition);
-            if(potentialMoves.contains(move)) {
-                movePiece(move);
-            }
-
-        }
-    }
-
     private Collection<ChessPosition> getEndPositions(ChessPosition position) {
         Collection<ChessMove> possibleMoves = board.getPiece(position).pieceMoves(board, position);
         Collection<ChessPosition> endPositions = new ArrayList<>();

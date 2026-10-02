@@ -136,7 +136,7 @@ public class ChessGame {
             for (ChessMove potentialMove : potentialMoves) {
                 ChessGame testGame = new ChessGame(this);
                 testGame.movePiece(potentialMove);
-                if (!testGame.isInCheck(teamTurn)) {
+                if (!testGame.isInCheck(board.getPiece(startPosition).getTeamColor())) {
                     validMoves.add(potentialMove);
                 }
             }

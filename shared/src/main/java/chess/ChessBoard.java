@@ -11,10 +11,23 @@ import java.util.Objects;
  */
 public class ChessBoard {
 
-    private ChessPiece[][] board = new ChessPiece[8][8];
+    private ChessPiece[][] board;
 
     public ChessBoard() {
-        resetBoard();
+        board = new ChessPiece[8][8];
+    }
+
+    public ChessBoard(ChessBoard other) {
+        board = new ChessPiece[8][8];
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                if(other.board[i][j] != null) {
+                    ChessGame.TeamColor color = other.board[i][j].getTeamColor();
+                    ChessPiece.PieceType type = other.board[i][j].getPieceType();
+                    this.board[i][j] = new ChessPiece(color, type);
+                }
+            }
+        }
     }
 
     /**

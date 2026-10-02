@@ -15,7 +15,7 @@ public class ChessGame {
     private TeamColor teamTurn;
 
     private boolean noTeamValidMoves(TeamColor teamColor) {
-        boolean validTeamMoves = false;
+        boolean noValidTeamMoves = true;
         for(int i = 1; i <= 8; i++) {
             for(int j = 1; j <= 8; j++) {
                 ChessPosition currentPos = new ChessPosition(i,j);
@@ -23,12 +23,12 @@ public class ChessGame {
                     ChessPiece piece = board.getPiece(currentPos);
                     Collection<ChessMove> possibleMoves = validMoves(currentPos);
                     if(!possibleMoves.isEmpty()) {
-                        validTeamMoves = true;
+                        noValidTeamMoves = false;
                     }
                 }
             }
         }
-        return !validTeamMoves;
+        return noValidTeamMoves;
     }
 
     private void movePiece(ChessMove move) {

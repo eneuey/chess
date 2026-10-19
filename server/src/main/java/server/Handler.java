@@ -1,6 +1,8 @@
 package server;
 
+import com.google.gson.Gson;
 import io.javalin.http.Context;
+import server.result.*;
 import service.*;
 
 public class Handler {
@@ -9,8 +11,14 @@ public class Handler {
     public Handler() {
         service = new Service();
     }
-    public String clear(Context ctx) {
-        //Result clearResult = new result();
-        return "";
+    public void clear(Context ctx) {
+        ctx.contentType("application/json");
+        Result clearResult = service.clear();
+        ctx.result(serialize(clearResult));
+    }
+
+    private String serialize(Object input) {
+        Gson serializer = new Gson();
+        return serializer.toJson(input);
     }
 }

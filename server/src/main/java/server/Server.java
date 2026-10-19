@@ -11,7 +11,7 @@ public class Server {
     public Server() {
         handler = new Handler();
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
-        javalin.delete("/db", this::clear);
+        javalin.delete("/db", handler::clear);
         // Register your endpoints and exception handlers here.
 
     }
@@ -23,10 +23,5 @@ public class Server {
 
     public void stop() {
         javalin.stop();
-    }
-
-    private void clear(Context ctx) {
-        ctx.contentType("application/json");
-        ctx.result(handler.clear(ctx));
     }
 }

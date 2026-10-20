@@ -12,8 +12,7 @@ public class Server {
         handler = new Handler();
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
         javalin.delete("/db", handler::clear);
-        // Register your endpoints and exception handlers here.
-
+        javalin.post("/user", handler::register);
     }
 
     public int run(int desiredPort) {

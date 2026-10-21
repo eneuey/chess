@@ -38,7 +38,25 @@ public class Service {
             String authToken = generateAuthToken();
             AuthData authData = new AuthData(authToken, request.username());
             authStorage.createAuth(authData);
-            return new Response(200, new RegisterResult(null, username, authToken));
+            return new Response(200, new ResultUsernameAndAuth(null, username, authToken));
+        } catch(DataAccessException e) {
+            return new Response(500, new Result(e.getMessage()));
+        }
+    }
+    public Response login(LoginRequest request) {
+        try {
+            String username = request.username();
+            UserData userdata = userStorage.getUser(username);
+            if(userdata == null) {
+                return new Response(401, new Result("Error: unauthorized"));
+            }
+            if(userdata.password().equals(request.password())) {
+                return new Response(401, new Result("Error: unauthorized"));
+            }
+            String authToken = generateAuthToken();
+            AuthData authData = new AuthData(authToken, username);
+            authStorage.createAuth(authData);
+            return new Response(200, new ResultUsernameAndAuth(null, username, authToken));
         } catch(DataAccessException e) {
             return new Response(500, new Result(e.getMessage()));
         }

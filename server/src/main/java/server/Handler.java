@@ -3,7 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.AlreadyTakenException;
 import io.javalin.http.Context;
-import server.request.RegisterRequest;
+import server.request.*;
 import server.result.*;
 import service.*;
 
@@ -26,6 +26,14 @@ public class Handler {
         Response registerResponse = service.register(request);
         ctx.status(registerResponse.status());
         ctx.result(serialize(registerResponse.result()));
+    }
+    public void login(Context ctx) {
+        ctx.contentType("application/json");
+        Gson gson = new Gson();
+        LoginRequest request = gson.fromJson(ctx.body(), LoginRequest.class);
+        Response loginResponse = service.login(request);
+        ctx.status(loginResponse.status());
+        ctx.result(serialize(loginResponse.result()));
     }
 
     private String serialize(Object input) {

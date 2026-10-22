@@ -15,35 +15,44 @@ public class Handler {
     }
     public void clear(Context ctx) {
         ctx.contentType("application/json");
-        Response clearResponse = service.clear();
-        ctx.status(clearResponse.status());
-        ctx.result(serialize(clearResponse.result()));
+        sendResponse(service.clear(), ctx);
     }
     public void register(Context ctx) {
         ctx.contentType("application/json");
         Gson gson = new Gson();
         RegisterRequest request = gson.fromJson(ctx.body(), RegisterRequest.class);
-        Response registerResponse = service.register(request);
-        ctx.status(registerResponse.status());
-        ctx.result(serialize(registerResponse.result()));
+        sendResponse(service.register(request), ctx);
     }
     public void login(Context ctx) {
         ctx.contentType("application/json");
         Gson gson = new Gson();
         LoginRequest request = gson.fromJson(ctx.body(), LoginRequest.class);
-        Response loginResponse = service.login(request);
-        ctx.status(loginResponse.status());
-        ctx.result(serialize(loginResponse.result()));
+        sendResponse(service.login(request), ctx);
     }
     public void logout(Context ctx) {
         ctx.contentType("application/json");
         Gson gson = new Gson();
         String authToken = ctx.header("Authorization");
-        Response logoutResponse = service.logout(new LogoutRequest(authToken));
-        ctx.status(logoutResponse.status());
-        ctx.result(serialize(logoutResponse.result()));
+        sendResponse(service.logout(authToken), ctx);
+    }
+    public void listGames(Context ctx) {
+        ctx.contentType("application/json");
+        Gson gson = new Gson();
+        String authToken = ctx.header("Authorization");
+        sendResponse(service.listGames(authToken), ctx);
+    }
+    public void createGame(Context ctx) {
+        ctx.contentType("application/json");
+        Gson gson = new Gson();
+        String authToken = ctx.header("Authorization");
+        CreateGameRequest request = gson.fromJson(ctx.body(), CreateGameRequest.class);
+        sendResponse(service.createGame(request, authToken), ctx);
     }
 
+    private void sendResponse(Response response, Context ctx) {
+        ctx.status(response.status());
+        ctx.result(serialize(response.result()));
+    }
     private String serialize(Object input) {
         Gson gson = new Gson();
         return gson.toJson(input);

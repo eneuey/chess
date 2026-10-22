@@ -1,16 +1,19 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
 import model.*;
 import server.request.*;
 import server.result.*;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public class Service {
     private UserDAO userStorage;
     private GameDAO gameStorage;
     private AuthDAO authStorage;
+    private int gameIDCounter = 0;
 
     public Service() {
         userStorage = new MemoryUserDAO();
@@ -67,9 +70,8 @@ public class Service {
             return new Response(500, new Result(e.getMessage()));
         }
     }
-    public Response logout(LogoutRequest request) {
+    public Response logout(String authToken) {
         try {
-            String authToken = request.token();
             if(authStorage.getAuth(authToken) == null) {
                 return new Response(401, new Result("Error: unauthorized"));
             }
@@ -79,8 +81,39 @@ public class Service {
             return new Response(500, new Result(e.getMessage()));
         }
     }
+    public Response listGames(String authToken) {
+        try {
+            if(authStorage.getAuth(authToken) == null) {
+                return new Response(401, new Result("Error: unauthorized"));
+            }
+            Collection<GameData> gameList = gameStorage.listGames();
+            return new Response(200, new ResultListGames(null, gameList));
+        } catch(DataAccessException e) {
+            return new Response(500, new Result(e.getMessage()));
+        }
+    }
+    public Response createGame(CreateGameRequest request, String authToken) {
+        try {
+            String gameName = request.gameName();
+            if(gameName == null) {
+                return new Response(400, new Result("Error: bad request"));
+            }
+            if(authStorage.getAuth(authToken) == null) {
+                return new Response(401, new Result("Error: unauthorized"));
+            }
+            GameData gameData = new GameData(generateGameID(),null, null, gameName, new ChessGame());
+            gameStorage.createGame(gameData);
+            return new Response(200, new CreateGameResult(null, gameName));
+        } catch(DataAccessException e) {
+            return new Response(500, new Result(e.getMessage()));
+        }
+    }
 
     private String generateAuthToken() {
         return UUID.randomUUID().toString();
+    }
+    private int generateGameID() {
+        gameIDCounter++;
+        return gameIDCounter;
     }
 }

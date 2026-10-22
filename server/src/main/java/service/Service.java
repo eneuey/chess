@@ -6,6 +6,7 @@ import model.*;
 import server.request.*;
 import server.result.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -86,7 +87,7 @@ public class Service {
             if(authStorage.getAuth(authToken) == null) {
                 return new Response(401, new Result("Error: unauthorized"));
             }
-            Collection<GameData> gameList = gameStorage.listGames();
+            Collection<GameDataResponse> gameList = ConvertGameDataToGameDataResponse(gameStorage.listGames());
             return new Response(200, new ResultListGames(null, gameList));
         } catch(DataAccessException e) {
             return new Response(500, new Result(e.getMessage()));
@@ -101,14 +102,21 @@ public class Service {
             if(authStorage.getAuth(authToken) == null) {
                 return new Response(401, new Result("Error: unauthorized"));
             }
-            GameData gameData = new GameData(generateGameID(),null, null, gameName, new ChessGame());
+            GameData gameData = new GameData(generateGameID(),"", "", gameName, new ChessGame());
             gameStorage.createGame(gameData);
-            return new Response(200, new CreateGameResult(null, gameName));
+            return new Response(200, new CreateGameResult(null, gameIDCounter));
         } catch(DataAccessException e) {
             return new Response(500, new Result(e.getMessage()));
         }
     }
 
+    private Collection<GameDataResponse> ConvertGameDataToGameDataResponse(Collection<GameData> gameDataList) {
+        Collection<GameDataResponse> output = new ArrayList<>();
+        for(GameData gameData : gameDataList) {
+            output.add(new GameDataResponse(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName()));
+        }
+        return output;
+    }
     private String generateAuthToken() {
         return UUID.randomUUID().toString();
     }

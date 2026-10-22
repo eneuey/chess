@@ -1,16 +1,16 @@
 package server.result;
 
-import model.GameData;
+import model.GameDataResponse;
 
 import java.util.Collection;
 
 public class ResultListGames extends Result {
-    Collection<GameData> games;
-    public ResultListGames(String message, Collection<GameData> games) {
+    Collection<GameDataResponse> games;
+    public ResultListGames(String message, Collection<GameDataResponse> games) {
         super(message);
         this.games = games;
     }
-    public Collection<GameData> getGames() {
+    public Collection<GameDataResponse> getGames() {
         return games;
     }
 }

@@ -1,12 +1,12 @@
 package server.result;
 
 public class CreateGameResult extends Result{
-    private final String gameName;
-    public CreateGameResult(String message, String gameName) {
+    private final int gameID;
+    public CreateGameResult(String message, int gameID) {
         super(message);
-        this.gameName = gameName;
+        this.gameID = gameID;
     }
-    public String getGameName() {
-        return gameName;
+    public int getGameName() {
+        return gameID;
     }
 }

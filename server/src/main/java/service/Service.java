@@ -102,7 +102,7 @@ public class Service {
             if(authStorage.getAuth(authToken) == null) {
                 return new Response(401, new Result("Error: unauthorized"));
             }
-            GameData gameData = new GameData(generateGameID(),"", "", gameName, new ChessGame());
+            GameData gameData = new GameData(generateGameID(),null, null, gameName, new ChessGame());
             gameStorage.createGame(gameData);
             return new Response(200, new CreateGameResult(null, gameIDCounter));
         } catch(DataAccessException e) {
@@ -117,19 +117,40 @@ public class Service {
             if(gameID == 0 || playerColor == null || authToken == null || gameData == null) {
                 return new Response(400, new Result("Error: bad request"));
             }
-            if(authStorage.getAuth(authToken) == null) {
+            AuthData authData = authStorage.getAuth(authToken);
+            if(authData == null) {
                 return new Response(401, new Result("Error: unauthorized"));
             }
-            if(playerColor == ChessGame.TeamColor.WHITE && !gameData.whiteUsername().isEmpty()) {
-                return new Response(403, new Result("Error: already taken"));
-            }
-            else if(playerColor == ChessGame.TeamColor.BLACK && !gameData.blackUsername().isEmpty()) {
-                return new Response(403, new Result("Error: already taken"));
+            String username = authData.username();
+            if(playerColor == ChessGame.TeamColor.WHITE) {
+                if(gameData.whiteUsername() != null) {
+                    return new Response(403, new Result("Error: already taken"));
+                }
+                else {
+                    GameData updatedGameData = new GameData(gameData.gameID(), username, gameData.blackUsername(), gameData.gameName(), gameData.game());
+                    gameStorage.updateGame(gameData.gameID(), updatedGameData);
+                    return new Response(200, new Result(null));
+                }
             }
             else {
-                //GameData updatedGameData = new GameData(gameID, )
-                return new Response(200, new Result(null));
+                if(gameData.blackUsername() != null) {
+                    return new Response(403, new Result("Error: already taken"));
+                }
+                else {
+                    GameData updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.game());
+                    gameStorage.updateGame(gameData.gameID(), updatedGameData);
+                    return new Response(200, new Result(null));
+                }
             }
+//            if(playerColor == ChessGame.TeamColor.WHITE && !gameData.whiteUsername().isEmpty()) {
+//                return new Response(403, new Result("Error: already taken"));
+//            }
+//            else if(playerColor == ChessGame.TeamColor.BLACK && !gameData.blackUsername().isEmpty()) {
+//                return new Response(403, new Result("Error: already taken"));
+//            }
+//            else {
+//                return new Response(200, new Result(null));
+//            }
         } catch(DataAccessException e) {
             return new Response(500, new Result(e.getMessage()));
         }

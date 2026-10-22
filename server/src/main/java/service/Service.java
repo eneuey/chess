@@ -142,15 +142,6 @@ public class Service {
                     return new Response(200, new Result(null));
                 }
             }
-//            if(playerColor == ChessGame.TeamColor.WHITE && !gameData.whiteUsername().isEmpty()) {
-//                return new Response(403, new Result("Error: already taken"));
-//            }
-//            else if(playerColor == ChessGame.TeamColor.BLACK && !gameData.blackUsername().isEmpty()) {
-//                return new Response(403, new Result("Error: already taken"));
-//            }
-//            else {
-//                return new Response(200, new Result(null));
-//            }
         } catch(DataAccessException e) {
             return new Response(500, new Result(e.getMessage()));
         }

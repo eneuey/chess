@@ -6,7 +6,7 @@ public class CreateGameResult extends Result{
         super(message);
         this.gameID = gameID;
     }
-    public int getGameName() {
+    public int getGameID() {
         return gameID;
     }
 }

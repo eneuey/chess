@@ -87,7 +87,7 @@ public class Service {
             if(authStorage.getAuth(authToken) == null) {
                 return new Response(401, new Result("Error: unauthorized"));
             }
-            Collection<GameDataResponse> gameList = ConvertGameDataToGameDataResponse(gameStorage.listGames());
+            Collection<GameDataResponse> gameList = convertGameDataToGameDataResponse(gameStorage.listGames());
             return new Response(200, new ResultListGames(null, gameList));
         } catch(DataAccessException e) {
             return new Response(500, new Result(e.getMessage()));
@@ -147,7 +147,7 @@ public class Service {
         }
     }
 
-    private Collection<GameDataResponse> ConvertGameDataToGameDataResponse(Collection<GameData> gameDataList) {
+    private Collection<GameDataResponse> convertGameDataToGameDataResponse(Collection<GameData> gameDataList) {
         Collection<GameDataResponse> output = new ArrayList<>();
         for(GameData gameData : gameDataList) {
             output.add(new GameDataResponse(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName()));

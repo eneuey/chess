@@ -35,6 +35,14 @@ public class Handler {
         ctx.status(loginResponse.status());
         ctx.result(serialize(loginResponse.result()));
     }
+    public void logout(Context ctx) {
+        ctx.contentType("application/json");
+        Gson gson = new Gson();
+        String authToken = ctx.header("Authorization");
+        Response logoutResponse = service.logout(new LogoutRequest(authToken));
+        ctx.status(logoutResponse.status());
+        ctx.result(serialize(logoutResponse.result()));
+    }
 
     private String serialize(Object input) {
         Gson gson = new Gson();

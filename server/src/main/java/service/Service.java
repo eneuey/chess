@@ -109,6 +109,31 @@ public class Service {
             return new Response(500, new Result(e.getMessage()));
         }
     }
+    public Response joinGame(JoinGameRequest request, String authToken) {
+        try {
+            ChessGame.TeamColor playerColor = request.playerColor();
+            int gameID = request.gameID();
+            GameData gameData = gameStorage.getGame(gameID);
+            if(gameID == 0 || playerColor == null || authToken == null || gameData == null) {
+                return new Response(400, new Result("Error: bad request"));
+            }
+            if(authStorage.getAuth(authToken) == null) {
+                return new Response(401, new Result("Error: unauthorized"));
+            }
+            if(playerColor == ChessGame.TeamColor.WHITE && !gameData.whiteUsername().isEmpty()) {
+                return new Response(403, new Result("Error: already taken"));
+            }
+            else if(playerColor == ChessGame.TeamColor.BLACK && !gameData.blackUsername().isEmpty()) {
+                return new Response(403, new Result("Error: already taken"));
+            }
+            else {
+                //GameData updatedGameData = new GameData(gameID, )
+                return new Response(200, new Result(null));
+            }
+        } catch(DataAccessException e) {
+            return new Response(500, new Result(e.getMessage()));
+        }
+    }
 
     private Collection<GameDataResponse> ConvertGameDataToGameDataResponse(Collection<GameData> gameDataList) {
         Collection<GameDataResponse> output = new ArrayList<>();

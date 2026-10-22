@@ -28,4 +28,7 @@ public class MemoryGameDAO implements GameDAO{
     public void updateGame(int gameID, GameData updatedGameData) throws DataAccessException {
         gameStorage.replace(gameID, updatedGameData);
     }
+    public GameData getGame(int gameID) throws DataAccessException {
+        return gameStorage.get(gameID);
+    }
 }

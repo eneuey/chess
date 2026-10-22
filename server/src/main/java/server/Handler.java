@@ -48,6 +48,13 @@ public class Handler {
         CreateGameRequest request = gson.fromJson(ctx.body(), CreateGameRequest.class);
         sendResponse(service.createGame(request, authToken), ctx);
     }
+    public void joinGame(Context ctx) {
+        ctx.contentType("application/json");
+        Gson gson = new Gson();
+        String authToken = ctx.header("Authorization");
+        JoinGameRequest request = gson.fromJson(ctx.body(), JoinGameRequest.class);
+        sendResponse(service.joinGame(request, authToken), ctx);
+    }
 
     private void sendResponse(Response response, Context ctx) {
         ctx.status(response.status());

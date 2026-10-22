@@ -60,7 +60,12 @@ public class ChessPiece {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int direction = 0;
-        if(pieceColor == ChessGame.TeamColor.WHITE) direction++; else direction--;
+        if(pieceColor == ChessGame.TeamColor.WHITE)  {
+            direction++;
+        }
+        else {
+            direction--;
+        }
         //Check if an extra starting move is available
         if((row == 2 || row == 7) && row + (2 * direction) < 8 && row + (2 * direction) > 0) {
             ChessPosition startingExtraSquare = new ChessPosition(row + (2 * direction),col );

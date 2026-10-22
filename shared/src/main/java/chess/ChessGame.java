@@ -144,7 +144,12 @@ public class ChessGame {
         Collection<ChessMove> possibleMoves = validMoves(startingPosition);
         if(board.getPiece(startingPosition) != null && board.getPiece(startingPosition).getTeamColor() == teamTurn && possibleMoves.contains(move)) {
             movePiece(move);
-            if(teamTurn == TeamColor.WHITE) teamTurn = TeamColor.BLACK; else teamTurn = TeamColor.WHITE;
+            if(teamTurn == TeamColor.WHITE) {
+                teamTurn = TeamColor.BLACK;
+            }
+            else {
+                teamTurn = TeamColor.WHITE;
+            }
         }
         else {
             throw new InvalidMoveException("Invalid Move");

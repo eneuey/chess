@@ -1,5 +1,7 @@
 package server;
 
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import io.javalin.*;
 
 public class Server {
@@ -8,6 +10,12 @@ public class Server {
     private final Handler handler;
 
     public Server() {
+        try {
+            DatabaseManager.createDatabase();
+            DatabaseManager.createTables();
+        } catch (DataAccessException e) {
+            System.out.println(e.getCause().toString());
+        }
         handler = new Handler();
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
         javalin.delete("/db", handler::clear);

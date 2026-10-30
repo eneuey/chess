@@ -17,7 +17,7 @@ public class SQLGameDAO implements GameDAO {
              PreparedStatement preparedStatement = conn.prepareStatement("TRUNCATE TABLE game")) {
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to clear", ex);
+            throw new DataAccessException("Error: failed to clear", ex);
         }
     }
     public void createGame(GameData gameData) throws DataAccessException {
@@ -36,7 +36,7 @@ public class SQLGameDAO implements GameDAO {
             preparedStatement.setString(5, game);
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to create game", ex);
+            throw new DataAccessException("Error: failed to create game", ex);
         }
     }
     public Collection<GameData> listGames() throws DataAccessException {
@@ -56,7 +56,7 @@ public class SQLGameDAO implements GameDAO {
                 return gameList;
             }
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to list games", ex);
+            throw new DataAccessException("Error: failed to list games", ex);
         }
     }
     public void updateGame(int gameID, GameData updatedGameData) throws DataAccessException {
@@ -74,7 +74,7 @@ public class SQLGameDAO implements GameDAO {
             preparedStatement.setInt(5, gameID);
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to update game", ex);
+            throw new DataAccessException("Error: failed to update game", ex);
         }
     }
     public GameData getGame(int gameID) throws DataAccessException {
@@ -95,7 +95,7 @@ public class SQLGameDAO implements GameDAO {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to get game", ex);
+            throw new DataAccessException("Error: failed to get game", ex);
         }
     }
 

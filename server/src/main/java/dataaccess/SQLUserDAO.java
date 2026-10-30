@@ -11,7 +11,7 @@ public class SQLUserDAO implements UserDAO {
              PreparedStatement preparedStatement = conn.prepareStatement("TRUNCATE TABLE user")) {
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to clear", ex);
+            throw new DataAccessException("Error: failed to clear", ex);
         }
     }
     public void createUser(UserData userData) throws DataAccessException {
@@ -26,7 +26,7 @@ public class SQLUserDAO implements UserDAO {
             preparedStatement.setString(3, password);
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to create user", ex);
+            throw new DataAccessException("Error: failed to create user", ex);
         }
     }
     public UserData getUser(String username) throws DataAccessException {
@@ -44,7 +44,7 @@ public class SQLUserDAO implements UserDAO {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to get user", ex);
+            throw new DataAccessException("Error: failed to get user", ex);
         }
     }
 }

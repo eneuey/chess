@@ -3,6 +3,7 @@ package service;
 import chess.ChessGame;
 import dataaccess.*;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 import server.request.*;
 import server.result.*;
 
@@ -40,7 +41,8 @@ public class Service {
             if(userStorage.getUser(username) != null) {
                 return new Response(403, new Result("Error: already taken"));
             }
-            UserData userData = new UserData(username,request.password(),request.email());
+            String hashedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
+            UserData userData = new UserData(username, hashedPassword ,request.email());
             userStorage.createUser(userData);
             String authToken = generateAuthToken();
             AuthData authData = new AuthData(authToken, request.username());
@@ -60,7 +62,7 @@ public class Service {
             if(userdata == null) {
                 return new Response(401, new Result("Error: unauthorized"));
             }
-            if(!userdata.password().equals(request.password())) {
+            if(!BCrypt.checkpw(request.password(), userdata.password())) {
                 return new Response(401, new Result("Error: unauthorized"));
             }
             String authToken = generateAuthToken();
@@ -146,7 +148,6 @@ public class Service {
             return new Response(500, new Result(e.getMessage()));
         }
     }
-
     private Collection<GameDataResponse> convertGameDataToGameDataResponse(Collection<GameData> gameDataList) {
         Collection<GameDataResponse> output = new ArrayList<>();
         for(GameData gameData : gameDataList) {

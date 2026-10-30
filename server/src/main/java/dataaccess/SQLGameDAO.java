@@ -14,7 +14,7 @@ import java.util.Collection;
 public class SQLGameDAO implements GameDAO {
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement("TRUNCATE TABLE gameData")) {
+             PreparedStatement preparedStatement = conn.prepareStatement("TRUNCATE TABLE game")) {
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             throw new DataAccessException("failed to clear", ex);
@@ -28,7 +28,7 @@ public class SQLGameDAO implements GameDAO {
         String game = serialize(gameData.game());
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement
-                     ("INSERT INTO gameData (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)")) {
+                     ("INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)")) {
             preparedStatement.setInt(1, gameID);
             preparedStatement.setString(2, whiteUsername);
             preparedStatement.setString(3, blackUsername);
@@ -41,7 +41,7 @@ public class SQLGameDAO implements GameDAO {
     }
     public Collection<GameData> listGames() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM gameData")) {
+             PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM game")) {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 Collection<GameData> gameList = new ArrayList<>();
                 while(resultSet.next()) {
@@ -66,7 +66,7 @@ public class SQLGameDAO implements GameDAO {
         String game = serialize(updatedGameData.game());
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement
-                     ("UPDATE gameData SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?")) {
+                     ("UPDATE game SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?")) {
             preparedStatement.setString(1, whiteUsername);
             preparedStatement.setString(2, blackUsername);
             preparedStatement.setString(3, gameName);
@@ -79,7 +79,7 @@ public class SQLGameDAO implements GameDAO {
     }
     public GameData getGame(int gameID) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM gameData WHERE gameID = ?")) {
+             PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM game WHERE gameID = ?")) {
             preparedStatement.setInt(1, gameID);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {

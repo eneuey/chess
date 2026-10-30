@@ -32,18 +32,18 @@ public class DatabaseManager {
     static public void createTables() throws DataAccessException {
         try (Connection conn = getConnection()) {
             String createAuthTable = """
-                CREATE TABLE IF NOT EXISTS authData (
+                CREATE TABLE IF NOT EXISTS auth (
                     username VARCHAR(255) NOT NULL,
                     authToken CHAR(36) NOT NULL
                 )""";
             String createUserTable = """
-                CREATE TABLE IF NOT EXISTS userData (
+                CREATE TABLE IF NOT EXISTS user (
                     username VARCHAR(255) NOT NULL,
                     password CHAR(60) NOT NULL,
                     email VARCHAR(255) NOT NULL
                 )""";
             String createGameTable = """
-                CREATE TABLE IF NOT EXISTS gameData (
+                CREATE TABLE IF NOT EXISTS game (
                     gameID INT NOT NULL AUTO_INCREMENT,
                     whiteUsername VARCHAR(255),
                     blackUsername VARCHAR(255),

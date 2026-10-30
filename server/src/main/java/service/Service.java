@@ -19,7 +19,7 @@ public class Service {
     public Service() {
         userStorage = new SQLUserDAO();
         gameStorage = new SQLGameDAO();
-        authStorage = new MemoryAuthDAO();
+        authStorage = new SQLAuthDAO();
     }
     public Response clear() {
         try {

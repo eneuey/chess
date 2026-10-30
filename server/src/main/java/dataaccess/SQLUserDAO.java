@@ -8,7 +8,7 @@ import java.sql.*;
 public class SQLUserDAO implements UserDAO {
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement("TRUNCATE TABLE userData")) {
+             PreparedStatement preparedStatement = conn.prepareStatement("TRUNCATE TABLE user")) {
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             throw new DataAccessException("failed to clear", ex);
@@ -20,7 +20,7 @@ public class SQLUserDAO implements UserDAO {
         String password = userData.password();
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement
-                     ("INSERT INTO userData (username, email, password) VALUES (?, ?, ?)")) {
+                     ("INSERT INTO user (username, email, password) VALUES (?, ?, ?)")) {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, email);
             preparedStatement.setString(3, password);
@@ -31,15 +31,13 @@ public class SQLUserDAO implements UserDAO {
     }
     public UserData getUser(String username) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement
-                     ("SELECT * FROM userData WHERE username=?")) {
+             PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM user WHERE username=?")) {
             preparedStatement.setString(1, username);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if(resultSet.next()) {
-                    String retrievedUsername = resultSet.getString(1);
                     String retrivedEmail = resultSet.getString(2);;
                     String retrievedPassword = resultSet.getString(3);
-                    return new UserData(retrievedUsername, retrivedEmail, retrievedPassword);
+                    return new UserData(username, retrivedEmail, retrievedPassword);
                 }
                 else {
                     return null;

@@ -5,7 +5,7 @@ import model.UserData;
 import java.sql.Connection;
 import java.sql.*;
 
-public class SQLUserDAO {
+public class SQLUserDAO implements UserDAO {
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement("TRUNCATE TABLE userData")) {
@@ -32,7 +32,7 @@ public class SQLUserDAO {
     public UserData getUser(String username) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement
-                     ("SELECT username, email, password FROM userData WHERE username=?")) {
+                     ("SELECT * FROM userData WHERE username=?")) {
             preparedStatement.setString(1, username);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if(resultSet.next()) {

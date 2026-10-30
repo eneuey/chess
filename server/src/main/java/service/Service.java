@@ -17,8 +17,8 @@ public class Service {
     private int gameIDCounter = 0;
 
     public Service() {
-        userStorage = new MemoryUserDAO();
-        gameStorage = new MemoryGameDAO();
+        userStorage = new SQLUserDAO();
+        gameStorage = new SQLGameDAO();
         authStorage = new MemoryAuthDAO();
     }
     public Response clear() {

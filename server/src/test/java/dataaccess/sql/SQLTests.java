@@ -97,6 +97,9 @@ public class SQLTests {
         assertDoesNotThrow(() -> gameDAO.updateGame(1, updatedGameData));
         assertDoesNotThrow(() -> assertEquals("teija", gameDAO.getGame(1).whiteUsername()));
     }
-
+    @Test
+    public void getGame() {
+        assertDoesNotThrow(() -> assertEquals("myGame", gameDAO.getGame(1).gameName()));
+    }
 
 }

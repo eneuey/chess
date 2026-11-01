@@ -1,13 +1,10 @@
-package dataaccess.sql;
+package dataaccess;
 
 import chess.ChessGame;
-import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 

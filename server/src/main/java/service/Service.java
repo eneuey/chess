@@ -132,7 +132,8 @@ public class Service {
                     return new Response(403, new Result("Error: already taken"));
                 }
                 else {
-                    GameData updatedGameData = new GameData(gameData.gameID(), username, gameData.blackUsername(), gameData.gameName(), gameData.game());
+                    GameData updatedGameData = new GameData(gameData.gameID(), username,
+                            gameData.blackUsername(), gameData.gameName(), gameData.game());
                     gameStorage.updateGame(gameData.gameID(), updatedGameData);
                     return new Response(200, new Result(null));
                 }
@@ -142,7 +143,8 @@ public class Service {
                     return new Response(403, new Result("Error: already taken"));
                 }
                 else {
-                    GameData updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.game());
+                    GameData updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(),
+                            username, gameData.gameName(), gameData.game());
                     gameStorage.updateGame(gameData.gameID(), updatedGameData);
                     return new Response(200, new Result(null));
                 }

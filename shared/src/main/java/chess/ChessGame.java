@@ -69,7 +69,9 @@ public class ChessGame {
         for(int i = 1; i <= 8; i++) {
             for(int j = 1; j <= 8; j++) {
                 ChessPosition currentPosition = new ChessPosition(i, j);
-                if(board.getPiece(currentPosition) != null && board.getPiece(currentPosition).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(currentPosition).getTeamColor() == teamColor) {
+                if(board.getPiece(currentPosition) != null
+                        && board.getPiece(currentPosition).getPieceType() == ChessPiece.PieceType.KING
+                        && board.getPiece(currentPosition).getTeamColor() == teamColor) {
                     return currentPosition;
                 }
             }
@@ -144,7 +146,7 @@ public class ChessGame {
         Collection<ChessMove> possibleMoves = validMoves(startingPosition);
         if(board.getPiece(startingPosition) != null && board.getPiece(startingPosition).getTeamColor() == teamTurn && possibleMoves.contains(move)) {
             movePiece(move);
-            if(teamTurn == TeamColor.WHITE) { //TODO: oneliner
+            if(teamTurn == TeamColor.WHITE) {
                 teamTurn = TeamColor.BLACK;
             }
             else {

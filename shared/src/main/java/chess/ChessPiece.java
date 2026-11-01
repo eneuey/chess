@@ -60,7 +60,7 @@ public class ChessPiece {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int direction = 0;
-        if(pieceColor == ChessGame.TeamColor.WHITE)  { //TODO oneliner
+        if(pieceColor == ChessGame.TeamColor.WHITE)  {
             direction++;
         }
         else {

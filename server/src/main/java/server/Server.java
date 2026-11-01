@@ -1,7 +1,7 @@
 package server;
 
 import dataaccess.DataAccessException;
-import dataaccess.DatabaseManager;
+import dataaccess.sql.DatabaseManager;
 import io.javalin.*;
 
 public class Server {

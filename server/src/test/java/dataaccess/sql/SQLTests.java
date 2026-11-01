@@ -1,6 +1,7 @@
-package dataaccess;
+package dataaccess.sql;
 
 import chess.ChessGame;
+import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;

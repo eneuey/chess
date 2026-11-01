@@ -54,6 +54,10 @@ public class SQLTests {
     public void getUser() {
         assertDoesNotThrow(() -> assertEquals("teija", userDAO.getUser("teija").username()));
     }
+    @Test
+    public void getUserDoesNotExist() {
+        assertDoesNotThrow(() -> assertNull(userDAO.getUser("ethan")));
+    }
 
     @Test
     public void clearAuth() {
@@ -74,6 +78,10 @@ public class SQLTests {
     @Test
     public void getAuth() {
         assertDoesNotThrow(() -> assertEquals("teija", authDAO.getAuth("secret").username()));
+    }
+    @Test
+    public void getAuthDoesNotExist() {
+        assertDoesNotThrow(() -> assertNull(authDAO.getAuth("fakeSecret")));
     }
 
     @Test
@@ -100,6 +108,10 @@ public class SQLTests {
     @Test
     public void getGame() {
         assertDoesNotThrow(() -> assertEquals("myGame", gameDAO.getGame(1).gameName()));
+    }
+    @Test
+    public void getGameDoesNotExist() {
+        assertDoesNotThrow(() -> assertNull(gameDAO.getGame(2)));
     }
 
 }

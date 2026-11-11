@@ -45,6 +45,7 @@ public class EscapeSequences {
     public static final String SET_BG_COLOR_BLUE = SET_BG_COLOR + "12m";
     public static final String SET_BG_COLOR_MAGENTA = SET_BG_COLOR + "5m";
     public static final String SET_BG_COLOR_WHITE = SET_BG_COLOR + "15m";
+    public static final String SET_BG_COLOR_TAN = "\033[48;2;210;180;140m";
     public static final String RESET_BG_COLOR = UNICODE_ESCAPE + "[49m";
 
     public static final String WHITE_KING = " ♔ ";
@@ -60,6 +61,20 @@ public class EscapeSequences {
     public static final String BLACK_ROOK = " ♜ ";
     public static final String BLACK_PAWN = " ♟ ";
     public static final String EMPTY = " \u2003 ";
+    public static final String EM_SPACE = "\u2003";
 
     public static String moveCursorToLocation(int x, int y) { return UNICODE_ESCAPE + "[" + y + ";" + x + "H"; }
+
+    public static final String DISPLAY_WHITE_KING = SET_TEXT_COLOR_WHITE + BLACK_KING + RESET_TEXT_COLOR;
+    public static final String DISPLAY_WHITE_QUEEN = SET_TEXT_COLOR_WHITE + BLACK_QUEEN + RESET_TEXT_COLOR;
+    public static final String DISPLAY_WHITE_BISHOP = SET_TEXT_COLOR_WHITE + BLACK_BISHOP + RESET_TEXT_COLOR;
+    public static final String DISPLAY_WHITE_KNIGHT = SET_TEXT_COLOR_WHITE + BLACK_KNIGHT + RESET_TEXT_COLOR;
+    public static final String DISPLAY_WHITE_ROOK = SET_TEXT_COLOR_WHITE + BLACK_ROOK + RESET_TEXT_COLOR;
+    public static final String DISPLAY_WHITE_PAWN = SET_TEXT_COLOR_WHITE + BLACK_PAWN + RESET_TEXT_COLOR;
+    public static final String DISPLAY_BLACK_KING = SET_TEXT_COLOR_BLACK + BLACK_KING + RESET_TEXT_COLOR;
+    public static final String DISPLAY_BLACK_QUEEN = SET_TEXT_COLOR_BLACK + BLACK_QUEEN + RESET_TEXT_COLOR;
+    public static final String DISPLAY_BLACK_BISHOP = SET_TEXT_COLOR_BLACK + BLACK_BISHOP + RESET_TEXT_COLOR;
+    public static final String DISPLAY_BLACK_KNIGHT = SET_TEXT_COLOR_BLACK + BLACK_KNIGHT + RESET_TEXT_COLOR;
+    public static final String DISPLAY_BLACK_ROOK = SET_TEXT_COLOR_BLACK + BLACK_ROOK + RESET_TEXT_COLOR;
+    public static final String DISPLAY_BLACK_PAWN = SET_TEXT_COLOR_BLACK + BLACK_PAWN + RESET_TEXT_COLOR;
 }

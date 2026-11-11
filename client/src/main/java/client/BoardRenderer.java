@@ -6,8 +6,6 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 
 import static ui.EscapeSequences.*;
-import static ui.EscapeSequences.DISPLAY_BLACK_PAWN;
-import static ui.EscapeSequences.DISPLAY_BLACK_ROOK;
 
 public class BoardRenderer {
 
@@ -41,42 +39,28 @@ public class BoardRenderer {
             isWhiteSquare = !isWhiteSquare;
             for(int j = 0; j < generatedBoard[i].length; j++) {
                 ChessPosition currentPos = new ChessPosition(i + 1, j + 1);
-                generatedBoard[i][j] = getBackgroud(isWhiteSquare) + getPiece(board.getPiece(currentPos)) + RESET_BG_COLOR;
+                generatedBoard[i][j] = getBackground(isWhiteSquare) + getPiece(board.getPiece(currentPos)) + RESET_BG_COLOR;
                 isWhiteSquare = !isWhiteSquare;
             }
         }
         return generatedBoard;
     }
-    private String getBackgroud(boolean isWhiteSquare) {
-        if(isWhiteSquare) {
-            return SET_BG_COLOR_TAN;
-        }
-        else {
-            return SET_BG_COLOR_DARK_GREEN;
-        }
+    private String getBackground(boolean isWhiteSquare) {
+        return (isWhiteSquare) ? SET_BG_COLOR_TAN : SET_BG_COLOR_DARK_GREEN;
     }
     private String getPiece(ChessPiece piece) {
         String square;
-        if(piece != null && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+        if(piece != null) {
+            String color = (piece.getTeamColor() == ChessGame.TeamColor.WHITE)
+                    ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
             ChessPiece.PieceType pieceType = piece.getPieceType();
             square = switch (pieceType) {
-                case KING -> DISPLAY_WHITE_KING;
-                case QUEEN -> DISPLAY_WHITE_QUEEN;
-                case BISHOP -> DISPLAY_WHITE_BISHOP;
-                case KNIGHT -> DISPLAY_WHITE_KNIGHT;
-                case ROOK -> DISPLAY_WHITE_ROOK;
-                case PAWN -> DISPLAY_WHITE_PAWN;
-            };
-        }
-        else if(piece != null && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            ChessPiece.PieceType pieceType = piece.getPieceType();
-            square = switch (pieceType) {
-                case KING -> DISPLAY_BLACK_KING;
-                case QUEEN -> DISPLAY_BLACK_QUEEN;
-                case BISHOP -> DISPLAY_BLACK_BISHOP;
-                case KNIGHT -> DISPLAY_BLACK_KNIGHT;
-                case ROOK -> DISPLAY_BLACK_ROOK;
-                case PAWN -> DISPLAY_BLACK_PAWN;
+                case KING -> color + BLACK_KING + RESET_TEXT_COLOR;
+                case QUEEN -> color + BLACK_QUEEN + RESET_TEXT_COLOR;
+                case BISHOP -> color + BLACK_BISHOP + RESET_TEXT_COLOR;
+                case KNIGHT -> color + BLACK_KNIGHT + RESET_TEXT_COLOR;
+                case ROOK -> color + BLACK_ROOK + RESET_TEXT_COLOR;
+                case PAWN -> color + BLACK_PAWN + RESET_TEXT_COLOR;
             };
         }
         else {

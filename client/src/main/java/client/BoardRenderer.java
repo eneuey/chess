@@ -13,9 +13,9 @@ public class BoardRenderer {
         String[][] generatedBoard = generateBoard(board);
         printColumnLabel(color);
         if(color == ChessGame.TeamColor.WHITE) {
-            for (int i = generatedBoard.length - 1; i >= 0; i--) {
+            for(int i = generatedBoard.length - 1; i >= 0; i--) {
                 System.out.print(SET_BG_COLOR_DARK_GREY + EM_SPACE + (i + 1) + " " + RESET_BG_COLOR);
-                for (int j = 0; j < generatedBoard[i].length; j++) {
+                for(int j = 0; j < generatedBoard[i].length; j++) {
                     System.out.print(generatedBoard[i][j]);
                 }
                 System.out.println(SET_BG_COLOR_DARK_GREY + " " + (i + 1) + EM_SPACE + RESET_BG_COLOR);

@@ -2,11 +2,11 @@ package service;
 
 import chess.ChessGame;
 import org.junit.jupiter.api.*;
+import result.*;
 import server.request.CreateGameRequest;
 import server.request.JoinGameRequest;
 import server.request.LoginRequest;
 import server.request.RegisterRequest;
-import server.result.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

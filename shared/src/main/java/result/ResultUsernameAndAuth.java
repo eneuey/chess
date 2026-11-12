@@ -1,6 +1,6 @@
-package server.result;
+package result;
 
-public class ResultUsernameAndAuth extends Result{
+public class ResultUsernameAndAuth extends Result {
     private final String username;
     private final String authToken;
     public ResultUsernameAndAuth(String message, String username, String authToken) {

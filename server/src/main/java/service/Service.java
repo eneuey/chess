@@ -7,8 +7,8 @@ import dataaccess.sql.SQLGameDAO;
 import dataaccess.sql.SQLUserDAO;
 import model.*;
 import org.mindrot.jbcrypt.BCrypt;
+import result.*;
 import server.request.*;
-import server.result.*;
 
 import java.util.ArrayList;
 import java.util.Collection;

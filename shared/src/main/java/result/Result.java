@@ -1,4 +1,4 @@
-package server.result;
+package result;
 
 public class Result {
     private final String message;

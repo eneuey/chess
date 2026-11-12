@@ -77,4 +77,11 @@ public class EscapeSequences {
     public static final String DISPLAY_BLACK_KNIGHT = SET_TEXT_COLOR_BLACK + BLACK_KNIGHT + RESET_TEXT_COLOR;
     public static final String DISPLAY_BLACK_ROOK = SET_TEXT_COLOR_BLACK + BLACK_ROOK + RESET_TEXT_COLOR;
     public static final String DISPLAY_BLACK_PAWN = SET_TEXT_COLOR_BLACK + BLACK_PAWN + RESET_TEXT_COLOR;
+
+    public static String generateErrorText(String message) {
+        return SET_TEXT_COLOR_RED + message + RESET_TEXT_COLOR;
+    }
+    public static String generateResponseText(String message) {
+        return SET_TEXT_COLOR_MAGENTA + message + RESET_TEXT_COLOR;
+    }
 }

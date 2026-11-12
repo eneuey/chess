@@ -2,6 +2,7 @@ package client;
 
 import chess.*;
 import client.exception.ResponseException;
+import ui.EscapeSequences;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -41,6 +42,7 @@ public class Client {
             String[] parameters = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (command) {
                 case "register" -> register(parameters);
+                case "login" -> login(parameters);
                 case "help" -> help();
                 case "quit" -> generateResponseText("bye");
                 default -> generateErrorText("Unknown command. Type \"help\" for a list of commands");
@@ -54,8 +56,19 @@ public class Client {
             String username = params[0];
             String password = params[1];
             String email = params[2];
-            state = State.LOGGEDIN;
+            server.register(username, password, email);
             return generateResponseText(String.format("Successfully registered user: %s", username));
+        }
+        throw new ResponseException(ResponseException.Code.ClientError,
+                generateErrorText("Expected: login <username> <password>"));
+    }
+    private String login(String... params) throws ResponseException {
+        if(params.length == 2) {
+            String username = params[0];
+            String password = params[1];
+            server.login(username, password);
+            state = State.LOGGEDIN;
+            return generateResponseText(String.format("Successfully logged in. Welcome %s", username));
         }
         throw new ResponseException(ResponseException.Code.ClientError,
                 generateErrorText("Expected: register <username> <password> <email>"));
@@ -66,8 +79,7 @@ public class Client {
                     - help
                     - quit
                     - login
-                    - register
-                    """;
+                    - register""";
         }
         return """
                 - help
@@ -75,19 +87,17 @@ public class Client {
                 - createGame
                 - listGames
                 - playGame
-                - observeGame
-                """;
+                - observeGame""";
     }
 
     private void printPrompt() {
         String currentState = (state == State.LOGGEDIN) ? "LOGGED_IN" : "LOGGED_OUT";
         System.out.print("\n" + "[" + currentState + "] " + ">>> ");
     }
-    private String generateErrorText(String message) {
-        return SET_TEXT_COLOR_RED + message + RESET_TEXT_COLOR;
-    }
-    private String generateResponseText(String message) {
-        return SET_TEXT_COLOR_MAGENTA + message + RESET_TEXT_COLOR;
+    private void assertSignedIn() throws ResponseException {
+        if (state == State.LOGGEDOUT) {
+            throw new ResponseException(ResponseException.Code.ClientError, generateErrorText("You must sign in"));
+        }
     }
 
 

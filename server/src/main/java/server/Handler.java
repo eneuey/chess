@@ -3,8 +3,8 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.AlreadyTakenException;
 import io.javalin.http.Context;
+import result.Response;
 import server.request.*;
-import server.result.*;
 import service.*;
 
 public class Handler {

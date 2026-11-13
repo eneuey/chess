@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import client.exception.ResponseException;
 import com.google.gson.Gson;
 import model.GameDataResponse;
@@ -52,7 +53,7 @@ public class ServerFacade {
                 .header("Authorization", authToken)
                 .DELETE()
                 .build();
-        HttpResponse<String> response = sendHTTPRequest(request);
+        sendHTTPRequest(request);
         authToken = "";
     }
 
@@ -88,10 +89,27 @@ public class ServerFacade {
                     "   White Player: %s%n" +
                     "   Black Player: %s",
                     gameListOrder, gameName, whiteUsername, blackUsername));
-            gameList.append(gameListOrder < games.size() ? "%n" : "");
+            gameList.append(gameListOrder < games.size() ? "\n" : "");
             currentGames.put(gameListOrder, gameID);
         }
         return gameList.toString();
+    }
+
+    public void playGame(Integer gameListOrder, String playerColor) throws ResponseException {
+        if(!currentGames.containsKey(gameListOrder)) {
+            throw new ResponseException(ResponseException.Code.ClientError,
+                    String.format("No game number %d exists", gameListOrder));
+        }
+        String jsonRequestBody = gson.toJson(Map.of(
+                "playerColor", playerColor,
+                "gameID", currentGames.get(gameListOrder)));
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(serverURL + "/game"))
+                .header("Content-Type", "application/json")
+                .header("Authorization", authToken)
+                .PUT(HttpRequest.BodyPublishers.ofString(jsonRequestBody))
+                .build();
+        HttpResponse<String> response = sendHTTPRequest(request);
     }
 
     private String makePostRequest(String jsonBody, String path) {

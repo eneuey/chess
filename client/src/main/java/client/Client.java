@@ -5,6 +5,7 @@ import client.exception.ResponseException;
 import ui.EscapeSequences;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -49,6 +50,8 @@ public class Client {
             case "logout" -> logout();
             case "listgames" -> listGames();
             case "creategame" -> createGame(parameters);
+            case "playgame" -> playGame(parameters);
+            case "observeGame" -> observeGame(parameters);
             case "help" -> help();
             case "quit" -> quit();
             default -> throw new ResponseException(ResponseException.Code.ClientError,
@@ -103,6 +106,42 @@ public class Client {
         return server.listGames();
     }
 
+    private String playGame(String... params) throws ResponseException {
+        if(params.length == 2 && (Objects.equals(params[1], "white") || Objects.equals(params[1], "black"))) {
+            Integer gameListOrder = Integer.valueOf(params[0]);
+            String playerColor = params[1].toUpperCase();
+            ChessGame.TeamColor perspective = Objects.equals(params[1], "white")
+                    ? ChessGame.TeamColor.WHITE
+                    : ChessGame.TeamColor.BLACK;
+            server.playGame(gameListOrder, playerColor);
+            ChessGame testGame = new ChessGame();
+            renderer.render(testGame.getBoard(), perspective);
+            Scanner scanner = new Scanner(System.in);
+            String result = "";
+            while(!result.equals("exit")) {
+                System.out.print("Type \"exit\" to leave game: ");
+                result = scanner.nextLine();
+            }
+            return "";
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: playGame <game number> <WHITE/BLACK>");
+    }
+
+    private String observeGame(String... params) {
+        if(params.length == 1) {
+            ChessGame testGame = new ChessGame();
+            renderer.render(testGame.getBoard(), ChessGame.TeamColor.WHITE);
+            Scanner scanner = new Scanner(System.in);
+            String result = "";
+            while(!result.equals("exit")) {
+                System.out.print("Type \"exit\" to leave game: ");
+                result = scanner.nextLine();
+            }
+            return "";
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: observeGame <game number>");
+    }
+
      private String quit() {
         if(state == State.LOGGEDIN) {
             logout();
@@ -124,8 +163,8 @@ public class Client {
                 - logout
                 - createGame <game name>
                 - listGames
-                - playGame <game ID> <WHITE/BLACK>
-                - observeGame <game ID>"""
+                - playGame <game number> <WHITE/BLACK>
+                - observeGame <game number>"""
                 + RESET_TEXT_COLOR;
     }
 

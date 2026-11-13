@@ -1,6 +1,7 @@
 package client;
 
 import chess.*;
+import ui.EscapeSequences;
 
 public class ClientMain {
     public static void main(String[] args) {
@@ -13,7 +14,7 @@ public class ClientMain {
             new Client(serverUrl).run();
 
         } catch (Throwable ex) {
-            System.out.printf("Unable to start server: %s%n", ex.getMessage());
+            System.out.printf(EscapeSequences.generateErrorText("Unable to start server: %s%n"), ex.getMessage());
         }
     }
 }

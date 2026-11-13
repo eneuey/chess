@@ -25,36 +25,35 @@ public class Client {
 
         Scanner scanner = new Scanner(System.in);
         String result = "";
-        while(!result.equals(generateResponseText("bye"))) {
+        while(!result.equals("bye")) {
             printPrompt();
             String line = scanner.nextLine();
             try {
                 result = eval(line);
-                System.out.print(result);
-            } catch (Throwable ex) {
+                System.out.print(generateResponseText(result));
+            } catch (ResponseException ex) {
                 System.out.print(generateErrorText(ex.getMessage()));
+            } catch (Throwable ex) {
+                System.out.print(generateErrorText(String.format("Internal Error %s: ",ex.getMessage())));
             }
         }
     }
 
-    private String eval(String input) {
-        try {
-            String[] tokens = input.toLowerCase().split(" ");
-            String command = (tokens.length > 0) ? tokens[0] : "unknown";
-            String[] parameters = Arrays.copyOfRange(tokens, 1, tokens.length);
-            return switch (command) {
-                case "register" -> register(parameters);
-                case "login" -> login(parameters);
-                case "logout" -> logout();
-                case "listgames" -> listGames();
-                case "creategame" -> createGame(parameters);
-                case "help" -> help();
-                case "quit" -> quit();
-                default -> generateErrorText("Unknown command. Type \"help\" for a list of commands");
-            };
-        } catch (ResponseException ex) {
-            return ex.getMessage();
-        }
+    private String eval(String input) throws ResponseException {
+        String[] tokens = input.toLowerCase().split(" ");
+        String command = (tokens.length > 0) ? tokens[0] : "unknown";
+        String[] parameters = Arrays.copyOfRange(tokens, 1, tokens.length);
+        return switch (command) {
+            case "register" -> register(parameters);
+            case "login" -> login(parameters);
+            case "logout" -> logout();
+            case "listgames" -> listGames();
+            case "creategame" -> createGame(parameters);
+            case "help" -> help();
+            case "quit" -> quit();
+            default -> throw new ResponseException(ResponseException.Code.ClientError,
+                    "Unknown command. Type \"help\" for a list of commands");
+        };
     }
 
     private String register(String... params) throws ResponseException {
@@ -65,10 +64,9 @@ public class Client {
             server.register(username, password, email);
             state = State.LOGGEDIN;
             playerUsername = username;
-            return generateResponseText(String.format("Successfully registered user: %s", username));
+            return String.format("Successfully registered user: %s", username);
         }
-        throw new ResponseException(ResponseException.Code.ClientError,
-                generateErrorText("Expected: register <username> <password> <email>"));
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: register <username> <password> <email>");
     }
 
     private String login(String... params) throws ResponseException {
@@ -78,17 +76,16 @@ public class Client {
             server.login(username, password);
             state = State.LOGGEDIN;
             playerUsername = username;
-            return generateResponseText(String.format("Successfully logged in. Welcome %s.", username));
+            return String.format("Successfully logged in. Welcome %s.", username);
         }
-        throw new ResponseException(ResponseException.Code.ClientError,
-                generateErrorText("Expected: login <username> <password>"));
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: login <username> <password>");
     }
 
     private String logout() throws ResponseException {
         assertSignedIn();
         server.logout();
         state = State.LOGGEDOUT;
-        return generateResponseText(String.format("Successfully logged out. Come back soon %s.", playerUsername));
+        return String.format("Successfully logged out. Come back soon %s.", playerUsername);
     }
 
     private String createGame(String... params) throws ResponseException {
@@ -96,22 +93,21 @@ public class Client {
         if(params.length == 1) {
             String gameName = params[0];
             server.createGame(gameName);
-            return generateResponseText(String.format("Successfully created game: %s", gameName));
+            return String.format("Successfully created game: %s", gameName);
         }
-        throw new ResponseException(ResponseException.Code.ClientError,
-                generateErrorText("Expected: createGame <game name>"));
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: createGame <game name>");
     }
 
     private String listGames() throws ResponseException {
         assertSignedIn();
-        return generateResponseText(server.listGames());
+        return server.listGames();
     }
 
      private String quit() {
         if(state == State.LOGGEDIN) {
             logout();
         }
-        return generateResponseText("bye");
+        return "bye";
      }
 
     private String help() {
@@ -140,7 +136,7 @@ public class Client {
 
     private void assertSignedIn() throws ResponseException {
         if (state == State.LOGGEDOUT) {
-            throw new ResponseException(ResponseException.Code.ClientError, generateErrorText("You must sign in"));
+            throw new ResponseException(ResponseException.Code.ClientError, "You must sign in");
         }
     }
 

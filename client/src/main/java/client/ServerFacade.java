@@ -84,11 +84,11 @@ public class ServerFacade {
             String whiteUsername = (currentGame.whiteUsername() != null) ? currentGame.whiteUsername() : "Not assigned";
             String blackUsername = (currentGame.blackUsername() != null) ? currentGame.blackUsername() : "Not assigned";
             String gameName = currentGame.gameName();
-            gameList.append(String.format("%d) %s\n" +
-                    "   White Player: %s\n" +
+            gameList.append(String.format("%d) %s%n" +
+                    "   White Player: %s%n" +
                     "   Black Player: %s",
                     gameListOrder, gameName, whiteUsername, blackUsername));
-            gameList.append(gameListOrder < games.size() ? "\n" : "");
+            gameList.append(gameListOrder < games.size() ? "%n" : "");
             currentGames.put(gameListOrder, gameID);
         }
         return gameList.toString();
@@ -110,7 +110,7 @@ public class ServerFacade {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Throwable ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, EscapeSequences.generateErrorText("Error: Could not connect to server"));
+            throw new ResponseException(ResponseException.Code.ServerError, "Error: Could not connect to server");
         }
         errorHandler(response);
         return response;
@@ -120,8 +120,7 @@ public class ServerFacade {
         int statusCode = response.statusCode();
         String jsonBody = response.body();
         if(statusCode != 200) {
-            throw new ResponseException(ResponseException.Code.ServerError,
-                    EscapeSequences.generateErrorText(deserializeErrorMessage(jsonBody)));
+            throw new ResponseException(ResponseException.Code.ServerError, deserializeErrorMessage(jsonBody));
         }
     }
 

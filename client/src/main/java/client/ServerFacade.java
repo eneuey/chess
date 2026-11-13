@@ -2,15 +2,16 @@ package client;
 
 import client.exception.ResponseException;
 import com.google.gson.Gson;
-import result.Result;
-import result.ResultUsernameAndAuth;
+import model.GameDataResponse;
+import result.*;
 import ui.EscapeSequences;
 
-import java.awt.desktop.SystemEventListener;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ServerFacade {
@@ -18,11 +19,14 @@ public class ServerFacade {
     private final HttpClient client;
     private final Gson gson;
     private String authToken;
+    private HashMap<Integer, Integer> currentGames;
 
     public ServerFacade(String serverURL) {
         this.serverURL = serverURL;
         client = HttpClient.newHttpClient();
         gson = new Gson();
+        currentGames = new HashMap<>();
+        authToken = "";
     }
 
     public void register(String username, String password, String email) throws ResponseException {
@@ -48,23 +52,58 @@ public class ServerFacade {
                 .header("Authorization", authToken)
                 .DELETE()
                 .build();
-        HttpResponse<String> response;
-        try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (Throwable ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, EscapeSequences.generateErrorText("Error: Could not connect to server"));
-        }
-        errorHandler(response);
+        HttpResponse<String> response = sendHTTPRequest(request);
         authToken = "";
+    }
+
+    public void createGame(String gameName) throws ResponseException {
+        String jsonRequestBody = gson.toJson(Map.of("gameName", gameName));
+        makePostRequest(jsonRequestBody, "game");
+    }
+
+    public String listGames() {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(serverURL + "/game"))
+                .header("Authorization", authToken)
+                .GET()
+                .build();
+        HttpResponse<String> response = sendHTTPRequest(request);
+        ArrayList<GameDataResponse> games = (ArrayList<GameDataResponse>)deserializeJsonBody(response.body(), ResultListGames.class).getGames();
+        if(!games.isEmpty()) {
+            return createGameList(games);
+        }
+        return "No current games";
+    }
+
+    private String createGameList(ArrayList<GameDataResponse> games) {
+        StringBuilder gameList = new StringBuilder();
+        for(int i = 0; i < games.size(); i++) {
+            GameDataResponse currentGame = games.get(1);
+            int gameID = currentGame.gameID();
+            String whiteUsername = currentGame.whiteUsername();
+            String blackUsername = currentGame.blackUsername();
+            String gameName = currentGame.gameName();
+            gameList.append(String.format("%d) %s\n" +
+                    "   White Player: %s\n" +
+                    "   Black Player: %s\n",
+                    i, gameName, whiteUsername, blackUsername));
+            currentGames.put(i, gameID);
+        }
+        return gameList.toString();
     }
 
     private String makePostRequest(String jsonBody, String path) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(serverURL + "/" + path))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + authToken)
+                .header("Authorization", authToken)
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
+        HttpResponse<String> response = sendHTTPRequest(request);
+        return response.body();
+    }
+
+    private HttpResponse<String> sendHTTPRequest(HttpRequest request) throws ResponseException {
         HttpResponse<String> response;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -72,7 +111,7 @@ public class ServerFacade {
             throw new ResponseException(ResponseException.Code.ServerError, EscapeSequences.generateErrorText("Error: Could not connect to server"));
         }
         errorHandler(response);
-        return response.body();
+        return response;
     }
 
     private void errorHandler(HttpResponse<String> response) throws ResponseException {
@@ -83,9 +122,11 @@ public class ServerFacade {
                     EscapeSequences.generateErrorText(deserializeErrorMessage(jsonBody)));
         }
     }
+
     private <T> T deserializeJsonBody(String jsonBody, Class<T> responseType) {
         return gson.fromJson(jsonBody, responseType);
     }
+
     private String deserializeErrorMessage(String jsonBody) {
         Result result = gson.fromJson(jsonBody, Result.class);
         return result.getMessage();

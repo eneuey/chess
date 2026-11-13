@@ -35,7 +35,7 @@ public class Client {
             } catch (ResponseException ex) {
                 System.out.print(generateErrorText(ex.getMessage()));
             } catch (Throwable ex) {
-                System.out.print(generateErrorText(String.format("Internal Error %s: ",ex.getMessage())));
+                System.out.print(generateErrorText(String.format("Internal Error %s",ex.getMessage())));
             }
         }
     }
@@ -109,7 +109,7 @@ public class Client {
     private String playGame(String... params) throws ResponseException {
         assertSignedIn();
         if(params.length == 2 && (Objects.equals(params[1], "white") || Objects.equals(params[1], "black"))) {
-            Integer gameListOrder = Integer.valueOf(params[0]);
+            Integer gameListOrder = getGameNumber(params[0]);
             String playerColor = params[1].toUpperCase();
             ChessGame.TeamColor perspective = Objects.equals(params[1], "white")
                     ? ChessGame.TeamColor.WHITE
@@ -131,7 +131,7 @@ public class Client {
     private String observeGame(String... params) {
         assertSignedIn();
         if(params.length == 1) {
-            Integer gameListOrder = Integer.valueOf(params[0]);
+            Integer gameListOrder = getGameNumber(params[0]);
             server.observeGame(gameListOrder);
             ChessGame testGame = new ChessGame();
             renderer.render(testGame.getBoard(), ChessGame.TeamColor.WHITE);
@@ -172,13 +172,21 @@ public class Client {
                 + RESET_TEXT_COLOR;
     }
 
+    private Integer getGameNumber(String input) throws ResponseException {
+        try {
+            return Integer.valueOf(input);
+        } catch (Throwable ex) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Must enter a valid game number");
+        }
+    }
+
     private void printPrompt() {
         String currentState = (state == State.LOGGEDIN) ? "LOGGED_IN" : "LOGGED_OUT";
         System.out.print("\n" + "[" + currentState + "] " + ">>> ");
     }
 
     private void assertSignedIn() throws ResponseException {
-        if (state == State.LOGGEDOUT) {
+        if(state == State.LOGGEDOUT) {
             throw new ResponseException(ResponseException.Code.ClientError, "You must sign in");
         }
     }
@@ -187,7 +195,7 @@ public class Client {
         ChessGame testGame = new ChessGame();
         try {
             testGame.makeMove(new ChessMove(new ChessPosition(2,6), new ChessPosition(4, 6), null));
-        } catch (Exception ex) {}
+        } catch(Exception ex) {}
         renderer.render(testGame.getBoard(), ChessGame.TeamColor.WHITE);
     }
 }

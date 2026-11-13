@@ -77,6 +77,82 @@ public class ServerFacadeTests {
         assertDoesNotThrow(() -> facade.logout());
     }
 
+    @Test
+    public void createGameSuccess() {
+        assertDoesNotThrow(() -> facade.createGame("facadeTestGame"));
+    }
+
+    @Test
+    public void listGamesSuccess() {
+        assertDoesNotThrow(() -> facade.createGame("facadeTestGame"));
+        assertDoesNotThrow(() -> {
+            String response = facade.listGames();
+            String expected = String.format("1) facadeTestGame%n" +
+                    "   White Player: Not assigned%n" +
+                    "   Black Player: Not assigned");
+            assertEquals(expected, response);
+        });
+    }
+
+    @Test
+    public void listGamesEmptyList() {
+        assertDoesNotThrow(() -> {
+            String response = facade.listGames();
+            assertEquals("No current games", response);
+        });
+    }
+
+    @Test
+    public void playGameSuccess() {
+        assertDoesNotThrow(() -> facade.createGame("facadeTestGame"));
+        assertDoesNotThrow(() -> facade.listGames());
+        assertDoesNotThrow(() -> facade.playGame(1, "WHITE"));
+    }
+
+    @Test
+    public void playGameBadRequest() {
+        assertDoesNotThrow(() -> facade.createGame("facadeTestGame"));
+        assertDoesNotThrow(() -> facade.listGames());
+        ResponseException ex = assertThrows(ResponseException.class,
+                () -> facade.playGame(1, "badTeamColor"));
+        assertEquals("Error: bad request", ex.getMessage());
+    }
+
+    @Test
+    public void playGameDoesNotExist() {
+        assertDoesNotThrow(() -> facade.createGame("facadeTestGame"));
+        assertDoesNotThrow(() -> facade.listGames());
+        ResponseException ex = assertThrows(ResponseException.class,
+                () -> facade.playGame(8, "WHITE"));
+        assertEquals("No game number 8 exists", ex.getMessage());
+    }
+
+    @Test
+    public void playGameAlreadyTaken() {
+        assertDoesNotThrow(() -> facade.createGame("facadeTestGame"));
+        assertDoesNotThrow(() -> facade.listGames());
+        assertDoesNotThrow(() -> facade.playGame(1, "WHITE"));
+        ResponseException ex = assertThrows(ResponseException.class,
+                () -> facade.playGame(1, "WHITE"));
+        assertEquals("Error: already taken", ex.getMessage());
+    }
+
+    @Test
+    public void observeGameSuccess() {
+        assertDoesNotThrow(() -> facade.createGame("facadeTestGame"));
+        assertDoesNotThrow(() -> facade.listGames());
+        assertDoesNotThrow(() -> facade.observeGame(1));
+    }
+
+    @Test
+    public void observeGameDoesNotExist() {
+        assertDoesNotThrow(() -> facade.createGame("facadeTestGame"));
+        assertDoesNotThrow(() -> facade.listGames());
+        ResponseException ex = assertThrows(ResponseException.class,
+                () -> facade.observeGame(8));
+        assertEquals("No game number 8 exists", ex.getMessage());
+    }
+
     private static void clear() {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:" + port + "/db"))

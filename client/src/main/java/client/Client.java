@@ -191,11 +191,4 @@ public class Client {
         }
     }
 
-    private void test() {
-        ChessGame testGame = new ChessGame();
-        try {
-            testGame.makeMove(new ChessMove(new ChessPosition(2,6), new ChessPosition(4, 6), null));
-        } catch(Exception ex) {}
-        renderer.render(testGame.getBoard(), ChessGame.TeamColor.WHITE);
-    }
 }

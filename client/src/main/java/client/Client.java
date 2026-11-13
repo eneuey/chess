@@ -51,7 +51,7 @@ public class Client {
             case "listgames" -> listGames();
             case "creategame" -> createGame(parameters);
             case "playgame" -> playGame(parameters);
-            case "observeGame" -> observeGame(parameters);
+            case "observegame" -> observeGame(parameters);
             case "help" -> help();
             case "quit" -> quit();
             default -> throw new ResponseException(ResponseException.Code.ClientError,
@@ -107,6 +107,7 @@ public class Client {
     }
 
     private String playGame(String... params) throws ResponseException {
+        assertSignedIn();
         if(params.length == 2 && (Objects.equals(params[1], "white") || Objects.equals(params[1], "black"))) {
             Integer gameListOrder = Integer.valueOf(params[0]);
             String playerColor = params[1].toUpperCase();
@@ -128,7 +129,10 @@ public class Client {
     }
 
     private String observeGame(String... params) {
+        assertSignedIn();
         if(params.length == 1) {
+            Integer gameListOrder = Integer.valueOf(params[0]);
+            server.observeGame(gameListOrder);
             ChessGame testGame = new ChessGame();
             renderer.render(testGame.getBoard(), ChessGame.TeamColor.WHITE);
             Scanner scanner = new Scanner(System.in);

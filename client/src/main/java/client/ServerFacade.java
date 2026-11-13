@@ -112,6 +112,13 @@ public class ServerFacade {
         HttpResponse<String> response = sendHTTPRequest(request);
     }
 
+    public void observeGame(Integer gameListOrder) {
+        if(!currentGames.containsKey(gameListOrder)) {
+            throw new ResponseException(ResponseException.Code.ClientError,
+                    String.format("No game number %d exists", gameListOrder));
+        }
+    }
+
     private String makePostRequest(String jsonBody, String path) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(serverURL + "/" + path))

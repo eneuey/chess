@@ -43,6 +43,7 @@ public class Client {
             return switch (command) {
                 case "register" -> register(parameters);
                 case "login" -> login(parameters);
+                case "logout" -> logout();
                 case "help" -> help();
                 case "quit" -> generateResponseText("bye");
                 default -> generateErrorText("Unknown command. Type \"help\" for a list of commands");
@@ -57,10 +58,11 @@ public class Client {
             String password = params[1];
             String email = params[2];
             server.register(username, password, email);
+            state = State.LOGGEDIN;
             return generateResponseText(String.format("Successfully registered user: %s", username));
         }
         throw new ResponseException(ResponseException.Code.ClientError,
-                generateErrorText("Expected: login <username> <password>"));
+                generateErrorText("Expected: register <username> <password> <email>"));
     }
     private String login(String... params) throws ResponseException {
         if(params.length == 2) {
@@ -71,23 +73,32 @@ public class Client {
             return generateResponseText(String.format("Successfully logged in. Welcome %s", username));
         }
         throw new ResponseException(ResponseException.Code.ClientError,
-                generateErrorText("Expected: register <username> <password> <email>"));
+                generateErrorText("Expected: login <username> <password>"));
     }
+    private String logout() throws ResponseException {
+        assertSignedIn();
+        server.logout();
+        state = State.LOGGEDOUT;
+        return generateResponseText(String.format("Successfully logged out. Come back soon."));
+    }
+
     private String help() {
         if(state == State.LOGGEDOUT) {
-            return """
+            return SET_TEXT_COLOR_BLUE + """
                     - help
                     - quit
-                    - login
-                    - register""";
+                    - login <username> <password>
+                    - register <username> <password> <email>"""
+                    + RESET_TEXT_COLOR;
         }
-        return """
+        return SET_TEXT_COLOR_BLUE + """
                 - help
                 - logout
-                - createGame
+                - createGame <game name>
                 - listGames
-                - playGame
-                - observeGame""";
+                - playGame <game ID> <WHITE/BLACK>
+                - observeGame <game ID>"""
+                + RESET_TEXT_COLOR;
     }
 
     private void printPrompt() {

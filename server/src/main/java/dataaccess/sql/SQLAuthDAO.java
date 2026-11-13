@@ -53,7 +53,7 @@ public class SQLAuthDAO implements AuthDAO {
             preparedStatement.setString(1, authToken);
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            throw new DataAccessException("Error: ailed to delete auth", ex);
+            throw new DataAccessException("Error: failed to delete auth", ex);
         }
     }
 }

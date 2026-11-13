@@ -104,8 +104,7 @@ public class Client {
 
     private String listGames() throws ResponseException {
         assertSignedIn();
-        String games = server.listGames();
-        return "not implemented fool";
+        return generateResponseText(server.listGames());
     }
 
      private String quit() {

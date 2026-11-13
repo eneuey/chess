@@ -78,16 +78,18 @@ public class ServerFacade {
     private String createGameList(ArrayList<GameDataResponse> games) {
         StringBuilder gameList = new StringBuilder();
         for(int i = 0; i < games.size(); i++) {
-            GameDataResponse currentGame = games.get(1);
+            GameDataResponse currentGame = games.get(i);
+            int gameListOrder = i + 1;
             int gameID = currentGame.gameID();
-            String whiteUsername = currentGame.whiteUsername();
-            String blackUsername = currentGame.blackUsername();
+            String whiteUsername = (currentGame.whiteUsername() != null) ? currentGame.whiteUsername() : "Not assigned";
+            String blackUsername = (currentGame.blackUsername() != null) ? currentGame.blackUsername() : "Not assigned";
             String gameName = currentGame.gameName();
             gameList.append(String.format("%d) %s\n" +
                     "   White Player: %s\n" +
-                    "   Black Player: %s\n",
-                    i, gameName, whiteUsername, blackUsername));
-            currentGames.put(i, gameID);
+                    "   Black Player: %s",
+                    gameListOrder, gameName, whiteUsername, blackUsername));
+            gameList.append(gameListOrder < games.size() ? "\n" : "");
+            currentGames.put(gameListOrder, gameID);
         }
         return gameList.toString();
     }

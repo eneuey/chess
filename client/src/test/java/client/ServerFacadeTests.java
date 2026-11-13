@@ -1,4 +1,5 @@
-import client.ServerFacade;
+package client;
+
 import client.exception.ResponseException;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
